@@ -1,3 +1,4 @@
+from typing import Sequence
 from fastapi import Depends, FastAPI, HTTPException, Query, status
 from sqlalchemy import Select, or_, select
 from sqlalchemy.orm import Session
@@ -37,7 +38,7 @@ def list_tasks(
     q: str | None = Query(default=None, description="Search in title/description"),
     completed: bool | None = Query(default=None, description="Filter by completion status"),
     db: Session = Depends(get_db),
-) -> list[Task]:
+) -> Sequence[Task]:
     stmt: Select[tuple[Task]] = select(Task)
     if q:
         like_query = f"%{q.strip()}%"
