@@ -33,11 +33,14 @@ jobs:
         run: poetry run bandit -r src
 
       - name: Dependency audit
-        run: mkdir -p .cache/pip-audit && poetry run pip-audit --cache-dir .cache/pip-audit
+        run: mkdir -p .cache/pip-audit && poetry run pip-audit --cache-dir .cache/pip-audit --progress-spinner=off --strict
 
       - name: Complexity (radon)
-        run: poetry run radon cc -a -s src
+        run: poetry run flake8 --radon-max-cc=7 src
 
       - name: Maintainability Index (radon)
         run: poetry run radon mi -s src
+
+      - name: Typecheck (mypy)
+        run: poetry run mypy src
 
