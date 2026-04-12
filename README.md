@@ -13,6 +13,62 @@ Small educational task tracking app built for SQR quality-gates practice:
 - Streamlit demo UI
 - Automated tests and quality checks
 
+## Project structure
+- `src/main.py` - FastAPI application and REST endpoints
+- `src/task_tracker/` - database config, ORM model, API schemas
+- `src/task_tracker/ui/app.py` - Streamlit UI
+- `tests/` - API tests
+- `.github/workflows/ci.yml` - CI quality gates
+
+## Setup (local `.venv` only)
+```bash
+poetry install --no-root --extras dev
+```
+
+## Run application
+Start API:
+```bash
+poetry run uvicorn src.main:app --reload
+```
+
+Open API docs:
+- `http://127.0.0.1:8000/docs`
+
+Start Streamlit UI (new terminal):
+```bash
+poetry run streamlit run src/task_tracker/ui/app.py
+```
+
+## Quality checks
+Lint:
+```bash
+poetry run flake8 src tests
+```
+
+Tests with coverage gate (>=75%):
+```bash
+poetry run pytest --cov=src --cov-report=term-missing --cov-fail-under=75
+```
+
+Security:
+```bash
+poetry run bandit -r src
+mkdir -p .cache/pip-audit
+poetry run pip-audit --cache-dir .cache/pip-audit
+```
+
+Complexity and maintainability:
+```bash
+poetry run flake8 --radon-max-cc=7 src
+poetry run radon mi -s src
+```
+
+## Architecture
+- `Task` entity contains title, description, completion status, and timestamps.
+- FastAPI endpoints provide CRUD operations and filtering by query/status.
+- Streamlit calls API endpoints via HTTP; UI layer is separated from backend logic.
+- SQLite is used for local persistence to keep the stack lightweight.
+
 ## Limitations (intentionally out of scope)
 - No authentication/authorization
 - SQLite only (no production database)
