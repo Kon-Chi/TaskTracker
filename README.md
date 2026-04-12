@@ -64,6 +64,10 @@ poetry run flake8 --radon-max-cc=7 src
 poetry run radon mi -s src
 ```
 
+## CI evidence
+- Link to CI: https://github.com/Kon-Chi/TaskTracker/actions/runs/24308758008
+- ![CI Evidence](ci-evi.png)
+
 ## Architecture
 - `Task` entity contains title, description, completion status, and timestamps.
 - FastAPI endpoints provide CRUD operations and filtering by query/status.
