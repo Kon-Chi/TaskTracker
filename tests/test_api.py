@@ -21,6 +21,39 @@ def test_healthcheck() -> None:
     assert response.json() == {"status": "ok"}
 
 
+def test_create_get_update_list_delete_task_flow() -> None:
+    created = client.post(
+        "/tasks",
+        json={"title": "Write tests", "description": "Add API coverage"},
+    )
+    assert created.status_code == 201
+    task = created.json()
+    task_id = task["id"]
+    assert task["title"] == "Write tests"
+    assert task["is_completed"] is False
+
+    fetched = client.get(f"/tasks/{task_id}")
+    assert fetched.status_code == 200
+    assert fetched.json()["id"] == task_id
+
+    updated = client.patch(
+        f"/tasks/{task_id}",
+        json={"is_completed": True, "title": "Write API tests"},
+    )
+    assert updated.status_code == 200
+    assert updated.json()["is_completed"] is True
+    assert updated.json()["title"] == "Write API tests"
+
+    listed = client.get("/tasks", params={"completed": True})
+    assert listed.status_code == 200
+    assert any(item["id"] == task_id for item in listed.json())
+
+    deleted = client.delete(f"/tasks/{task_id}")
+    assert deleted.status_code == 204
+
+    missing = client.get(f"/tasks/{task_id}")
+    assert missing.status_code == 404
+
 
 def test_search_and_not_found_paths() -> None:
     first = client.post("/tasks", json={"title": "Buy milk", "description": "2L"})
@@ -33,4 +66,10 @@ def test_search_and_not_found_paths() -> None:
     payload = search.json()
     assert len(payload) >= 1
     assert any("Alice" in item["title"] for item in payload)
+
+    missing_patch = client.patch("/tasks/999999", json={"title": "x"})
+    assert missing_patch.status_code == 404
+
+    missing_delete = client.delete("/tasks/999999")
+    assert missing_delete.status_code == 404
 

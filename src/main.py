@@ -61,3 +61,33 @@ def get_task(task_id: int, db: Session = Depends(get_db)) -> Task:
     return task
 
 
+@app.patch("/tasks/{task_id}", response_model=TaskResponse)
+def update_task(task_id: int, payload: TaskUpdate, db: Session = Depends(get_db)) -> Task:
+    task = db.get(Task, task_id)
+    if task is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+
+    updates = payload.model_dump(exclude_unset=True)
+    if "title" in updates and updates["title"] is not None:
+        task.title = updates["title"].strip()
+    if "description" in updates and updates["description"] is not None:
+        task.description = updates["description"].strip()
+    if "is_completed" in updates and updates["is_completed"] is not None:
+        task.is_completed = updates["is_completed"]
+
+    db.add(task)
+    db.commit()
+    db.refresh(task)
+    return task
+
+
+@app.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_task(task_id: int, db: Session = Depends(get_db)) -> None:
+    task = db.get(Task, task_id)
+    if task is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+
+    db.delete(task)
+    db.commit()
+    return None
+
