@@ -67,6 +67,9 @@ poetry run radon mi -s src
 ## CI evidence
 - Link to CI: https://github.com/Kon-Chi/TaskTracker/actions/runs/24308758008
 - ![CI Evidence](ci-evi.png)
+- ![Coverage Evidence](coverage-evi.png)
+- ![Radon Evidence](radon-evi.png)
+- ![Bandit Evidence](bandit-evi.png)
 
 ## Architecture
 - `Task` entity contains title, description, completion status, and timestamps.
