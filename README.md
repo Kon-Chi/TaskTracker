@@ -33,6 +33,7 @@ poetry run uvicorn src.main:app --reload
 
 Open API docs:
 - `http://127.0.0.1:8000/docs`
+![Open API Evidence](openapi-evi.png)
 
 Start Streamlit UI (new terminal):
 ```bash
