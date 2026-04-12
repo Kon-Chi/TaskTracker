@@ -70,11 +70,11 @@ def update_task(task_id: int, payload: TaskUpdate, db: Session = Depends(get_db)
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
 
     updates = payload.model_dump(exclude_unset=True)
-    if "title" in updates and updates["title"] is not None:
+    if updates.get("title") is not None:
         task.title = updates["title"].strip()
-    if "description" in updates and updates["description"] is not None:
+    if updates.get("description") is not None:
         task.description = updates["description"].strip()
-    if "is_completed" in updates and updates["is_completed"] is not None:
+    if updates.get("is_completed") is not None:
         task.is_completed = updates["is_completed"]
 
     db.add(task)
